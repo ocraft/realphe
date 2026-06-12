@@ -1,0 +1,13 @@
+[core]
+    analytics = False
+[hydra]
+    enabled = True
+    plugins_path = "src/realphe/env/"
+[cache]
+    type = "reflink,hardlink,copy"
+[plots]
+    out_dir = eval/
+[exp]
+    auto_push = False
+[studio]
+    offline = True

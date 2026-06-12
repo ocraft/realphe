@@ -1,0 +1,666 @@
+path:
+  data:
+    raw: data/raw
+    interim: data/interim
+    processed: data/processed
+  eval: eval
+db:
+  host: localhost
+  dbname: mimiciv_20
+  user: postgres
+  password: postgres
+phenotyping:
+  path:
+    data:
+      interim: data/interim/phenotyping
+      processed: data/processed/phenotyping
+    eval: eval/phenotyping
+  cohort:
+    adult_age: 16
+    short_icu_los_hours: 12
+    long_icu_los_hours: 336
+    diagnoses_min_samples: 375
+    diagnoses_coding: icd9
+    exclusion:
+      exclusion_short_icu_los: 1
+      exclusion_long_icu_los: 1
+      exclusion_not_adult: 1
+      exclusion_not_first_icu_stay: 1
+      exclusion_not_first_hosp_stay: 0
+      exclusion_surgical: 0
+      exclusion_many_services: 0
+      exclusion_invalid_data: 1
+      exclusion_only_rare_diagnoses: 1
+    features:
+    - age
+    - language
+    - gender
+    - height
+    - insurance
+    - marital_status
+    - race
+    - admission_location
+    - admission_time
+    - admission_type
+    - first_careunit
+    - hospstay_seq
+    - last_service
+    - currently_experiencing_pain
+    - dialysis_patient
+    - difficulty_swallowing
+    - ethyl_alcohol
+    - history_of_falls
+    - home_tube_feeding
+    - insulin_pump
+    - iv_access_prior_to_admission
+    - pressure_ulcer_present
+    - self_activities_of_daily_living
+    - visual_hearing_deficit
+    outcomes:
+    - icu_expire_flag
+    - hospital_expire_flag
+    - thirtyday_expire_flag
+    - los_icu_hours
+  actions:
+    min_event_samples: 300
+  signals:
+    time_unit: hour
+    time_step: 2
+    features:
+    - time_at
+    - weight
+    - diastolic_blood_pressure
+    - ectopy_frequency
+    - ectopy_frequency_secondary
+    - ectopy_type
+    - ectopy_type_secondary
+    - heart_rate
+    - heart_rhythm
+    - mean_blood_pressure
+    - systolic_blood_pressure
+    - temperature
+    - temperature_site
+    - albumin
+    - aniongap
+    - bicarbonate
+    - blood_urea_nitrogen
+    - c_reactive_protein
+    - calcium
+    - chloride
+    - creatinine
+    - globulin
+    - glucose
+    - magnesium
+    - phosphate
+    - potassium
+    - total_protein
+    - sodium
+    - ph_urine
+    - alanine_aminotransferase
+    - alkaline_phosphatase
+    - amylase
+    - asparate_aminotransferase
+    - bilirubin_direct
+    - bilirubin_indirect
+    - bilirubin_total
+    - creatinine_kinase
+    - gamma_glutamyltransferase
+    - lactate_dehydrogenase
+    - creatinine_kinase_mb_isoenzyme
+    - n_terminal_pro_hormone_bnp
+    - troponin_t
+    - alveolar_arterial_gradient
+    - arterial_o2_saturation
+    - base_excess
+    - total_co2
+    - carboxyhemoglobin
+    - free_calcium
+    - lactate
+    - methemoglobin
+    - partial_pressure_of_co2
+    - partial_pressure_of_o2
+    - blood_gas_temperature
+    - ph_blood
+    - hematocrit
+    - hemoglobin
+    - mean_corpuscular_hemoglobin
+    - mean_corpuscular_hemoglobin_concentration
+    - mean_corpuscular_volume
+    - platelet_count
+    - red_blood_cells
+    - red_cell_distribution_width
+    - white_blood_cells
+    - basophils_abs
+    - eosinophils_abs
+    - lymphocytes_abs
+    - monocytes_abs
+    - neutrophils_abs
+    - atypical_lymphocytes
+    - bands
+    - basophils
+    - eosinophils
+    - immature_granulocytes
+    - lymphocytes
+    - metamyelocytes
+    - monocytes
+    - neutrophils
+    - nucleated_red_cells
+    - d_dimer
+    - fibrinogen
+    - international_normalized_ratio
+    - partial_thromboplastin_time
+    - prothrombin_time
+    - thrombin
+    - intra_cranial_pressure
+    - urine_output
+    - peripheral_o2_saturation
+    - flow_rate
+    - fraction_inspired_o2
+    - minute_volume
+    - peep
+    - plateau_pressure
+    - respiratory_rate
+    - respiratory_rate_set
+    - respiratory_rate_spontaneous
+    - tidal_volume_observed
+    - tidal_volume_set
+    - tidal_volume_spontaneous
+    - ventilator_mode
+    - ventilator_mode_hamilton
+    - ventilator_type
+    - o2_delivery_device_1
+    - o2_delivery_device_2
+    - o2_delivery_device_3
+    - o2_delivery_device_4
+    - o2_flow
+    - o2_flow_additional
+    - gcs_eyes
+    - gcs_motor
+    - gcs
+    - gcs_unable
+    - gcs_verbal
+    - strength_l_arm
+    - strength_l_leg
+    - strength_r_arm
+    - strength_r_leg
+    - capillary_refill_rate_l
+    - capillary_refill_rate_r
+    - braden_activity
+    - braden_friction
+    - braden_mobility
+    - braden_moisture
+    - braden_nutrition
+    - braden_sensory_perception
+    - skin_temperature
+    - alarms_on
+    - heart_rate_alarm_high
+    - heart_rate_alarm_low
+    - blood_pressure_alarm_high
+    - blood_pressure_alarm_low
+    - o2_saturation_desat_limit
+    - o2_saturation_alarm_high
+    - o2_saturation_alarm_low
+    - parameters_checked
+    - respiratory_rate_alarm_high
+    - respiratory_rate_alarm_low
+    - st_segment_monitoring_on
+    - ambulatory_aid
+    - gait_transferring
+    - high_risk_gt_51_interventions
+    - history_of_falling_3m
+    - iv_saline_lock
+    - mental_status
+    - secondary_diagnosis
+    - pain_level
+    - pain_level_response
+    - richmond_ras_scale
+    - richmond_ras_scale_goal
+    - gauge_18_dressing_occlusive
+    - gauge_18_placed_in_outside_facility
+    - gauge_20_dressing_occlusive
+    - gauge_20_placed_in_outside_facility
+    - gauge_20_placed_in_the_field
+    - eye_care
+  test_set:
+    test_size: 0.2
+    stratify: true
+    shuffle: true
+    random_seed: 15
+  evaluate:
+    main:
+      random_seed: 42
+      map_k: 10
+    adversarial:
+      random_seed: 42
+      hparams:
+        batch_size: 256
+        epochs: 100
+        optimizer: adam
+        adam:
+          lr: 0.001
+          betas:
+          - 0.9
+          - 0.999
+          eps: 1.0e-07
+        early_stop:
+          monitor: eval_aucroc
+          mode: max
+          patience: 1
+          min_delta: 0.0001
+        model:
+          lstm_units: 256
+      cv:
+        folds: 5
+        shuffle: true
+  baseline:
+    cohort:
+    - age
+    - language
+    - gender
+    - height
+    - insurance
+    - marital_status
+    - race
+    - admission_type
+    - first_careunit
+    - hospstay_seq
+    - currently_experiencing_pain
+    - dialysis_patient
+    - difficulty_swallowing
+    - ethyl_alcohol
+    - history_of_falls
+    - home_tube_feeding
+    - insulin_pump
+    - iv_access_prior_to_admission
+    - pressure_ulcer_present
+    - self_activities_of_daily_living
+    - visual_hearing_deficit
+    signals:
+    - weight
+    - diastolic_blood_pressure
+    - ectopy_frequency
+    - ectopy_frequency_secondary
+    - ectopy_type
+    - ectopy_type_secondary
+    - heart_rate
+    - heart_rhythm
+    - mean_blood_pressure
+    - systolic_blood_pressure
+    - temperature
+    - temperature_site
+    - albumin
+    - aniongap
+    - bicarbonate
+    - blood_urea_nitrogen
+    - c_reactive_protein
+    - calcium
+    - chloride
+    - creatinine
+    - globulin
+    - glucose
+    - magnesium
+    - phosphate
+    - potassium
+    - total_protein
+    - sodium
+    - ph_urine
+    - alanine_aminotransferase
+    - alkaline_phosphatase
+    - amylase
+    - asparate_aminotransferase
+    - bilirubin_direct
+    - bilirubin_indirect
+    - bilirubin_total
+    - creatinine_kinase
+    - gamma_glutamyltransferase
+    - lactate_dehydrogenase
+    - creatinine_kinase_mb_isoenzyme
+    - n_terminal_pro_hormone_bnp
+    - troponin_t
+    - alveolar_arterial_gradient
+    - arterial_o2_saturation
+    - base_excess
+    - total_co2
+    - carboxyhemoglobin
+    - free_calcium
+    - lactate
+    - methemoglobin
+    - partial_pressure_of_co2
+    - partial_pressure_of_o2
+    - blood_gas_temperature
+    - ph_blood
+    - hematocrit
+    - hemoglobin
+    - mean_corpuscular_hemoglobin
+    - mean_corpuscular_hemoglobin_concentration
+    - mean_corpuscular_volume
+    - platelet_count
+    - red_blood_cells
+    - red_cell_distribution_width
+    - white_blood_cells
+    - basophils_abs
+    - eosinophils_abs
+    - lymphocytes_abs
+    - monocytes_abs
+    - neutrophils_abs
+    - atypical_lymphocytes
+    - bands
+    - basophils
+    - eosinophils
+    - immature_granulocytes
+    - lymphocytes
+    - metamyelocytes
+    - monocytes
+    - neutrophils
+    - nucleated_red_cells
+    - d_dimer
+    - fibrinogen
+    - international_normalized_ratio
+    - partial_thromboplastin_time
+    - prothrombin_time
+    - thrombin
+    - intra_cranial_pressure
+    - urine_output
+    - peripheral_o2_saturation
+    - flow_rate
+    - fraction_inspired_o2
+    - minute_volume
+    - peep
+    - plateau_pressure
+    - respiratory_rate
+    - respiratory_rate_set
+    - respiratory_rate_spontaneous
+    - tidal_volume_observed
+    - tidal_volume_set
+    - tidal_volume_spontaneous
+    - ventilator_mode
+    - ventilator_mode_hamilton
+    - ventilator_type
+    - o2_flow
+    - o2_flow_additional
+    - gcs_eyes
+    - gcs_motor
+    - gcs
+    - gcs_unable
+    - gcs_verbal
+    - strength_l_arm
+    - strength_l_leg
+    - strength_r_arm
+    - strength_r_leg
+    - capillary_refill_rate_l
+    - capillary_refill_rate_r
+    - braden_activity
+    - braden_friction
+    - braden_mobility
+    - braden_moisture
+    - braden_nutrition
+    - braden_sensory_perception
+    - skin_temperature
+    - alarms_on
+    - heart_rate_alarm_high
+    - heart_rate_alarm_low
+    - blood_pressure_alarm_high
+    - blood_pressure_alarm_low
+    - o2_saturation_desat_limit
+    - o2_saturation_alarm_high
+    - o2_saturation_alarm_low
+    - parameters_checked
+    - respiratory_rate_alarm_high
+    - respiratory_rate_alarm_low
+    - st_segment_monitoring_on
+    - ambulatory_aid
+    - gait_transferring
+    - high_risk_gt_51_interventions
+    - history_of_falling_3m
+    - iv_saline_lock
+    - mental_status
+    - secondary_diagnosis
+    - pain_level
+    - pain_level_response
+    - richmond_ras_scale
+    - richmond_ras_scale_goal
+    - gauge_18_dressing_occlusive
+    - gauge_18_placed_in_outside_facility
+    - gauge_20_dressing_occlusive
+    - gauge_20_placed_in_outside_facility
+    - gauge_20_placed_in_the_field
+    - eye_care
+    evaluate:
+      cv:
+        folds:
+        - 0
+        - 1
+        - 2
+        - 3
+        - 4
+        - 5
+        - 6
+        - 7
+        - 8
+        - 9
+        shuffle: true
+        seeds:
+        - 100
+        - 189
+        - 3
+        - 10
+        - 15
+        - 44
+        - 999
+      pfi:
+        seeds:
+        - 100
+        - 189
+        - 3
+        - 10
+        - 15
+        folds:
+        - 0
+    hparams:
+      batch_size: 256
+      epochs: 1000
+      early_stop:
+        monitor: eval_ls_aucpr
+        mode: max
+        patience: 3
+        min_delta: 0.0001
+      scheduler: step_lr
+      lr_scheduler:
+        gamma: 0.1
+        step_size: 4
+      optimizer: adam
+      adam:
+        lr: 0.001
+        betas:
+        - 0.9
+        - 0.999
+        eps: 1.0e-07
+      criterion: wbce
+      wbce:
+        label_smoothing: 0.001
+        ramp_min: 0.01
+      model:
+        lstm_units: 512
+        dropout: 0.3
+coding:
+  path:
+    data:
+      processed: data/processed/coding
+    eval: eval/coding
+  ccs:
+    evaluate:
+      cv:
+        folds: 10
+        shuffle: true
+        seeds:
+        - 15
+        - 999
+        - 42
+    hparams:
+      gauss_noise: 0.1
+      units: 512
+      dropout_h1: 0.3
+      dropout_h2: 0.1
+      epochs: 1000
+      optimizer: adam
+      adam:
+        lr: 0.001
+        betas:
+        - 0.9
+        - 0.999
+        eps: 1.0e-07
+      batch_size: 1024
+      early_stop:
+        monitor: eval_aucroc
+        mode: max
+        patience: 15
+        min_delta: 0.0
+      scheduler: reduce_lr_on_plateau
+      lr_scheduler:
+        monitor: eval_aucroc
+        scheduler:
+          mode: max
+          factor: 0.1
+          patience: 10
+          threshold: 0.0001
+outcome:
+  path:
+    data:
+      processed: data/processed/outcome
+    eval: eval/outcome
+  death_in_hospital:
+    evaluate:
+      cv:
+        folds: 10
+        shuffle: true
+        seeds:
+        - 15
+        - 999
+        - 42
+    hparams:
+      units: 128
+      dropout_h1: 0.4
+      optimizer: adam
+      adam:
+        lr: 0.001
+        betas:
+        - 0.9
+        - 0.999
+        eps: 1.0e-07
+      batch_size: 1024
+      epochs: 1000
+      early_stop:
+        monitor: eval_aucroc
+        mode: max
+        patience: 2
+        min_delta: 0.0001
+      scheduler: reduce_lr_on_plateau
+      lr_scheduler:
+        monitor: eval_aucroc
+        scheduler:
+          mode: max
+          factor: 0.1
+          patience: 0
+          threshold: 0.0001
+  death_in_icu:
+    evaluate:
+      cv:
+        folds: 10
+        shuffle: true
+        seeds:
+        - 15
+        - 999
+        - 42
+    hparams:
+      units: 128
+      dropout_h1: 0.4
+      optimizer: adam
+      adam:
+        lr: 0.001
+        betas:
+        - 0.9
+        - 0.999
+        eps: 1.0e-07
+      batch_size: 1024
+      epochs: 1000
+      early_stop:
+        monitor: eval_aucroc
+        mode: max
+        patience: 2
+        min_delta: 0.0001
+      scheduler: reduce_lr_on_plateau
+      lr_scheduler:
+        monitor: eval_aucroc
+        scheduler:
+          mode: max
+          factor: 0.1
+          patience: 0
+          threshold: 0.0001
+  death_30d_icu:
+    evaluate:
+      cv:
+        folds: 10
+        shuffle: true
+        seeds:
+        - 15
+        - 999
+        - 42
+    hparams:
+      units: 128
+      dropout_h1: 0.4
+      optimizer: adam
+      adam:
+        lr: 0.001
+        betas:
+        - 0.9
+        - 0.999
+        eps: 1.0e-07
+      batch_size: 1024
+      epochs: 1000
+      early_stop:
+        monitor: eval_aucroc
+        mode: max
+        patience: 2
+        min_delta: 0.0001
+      scheduler: reduce_lr_on_plateau
+      lr_scheduler:
+        monitor: eval_aucroc
+        scheduler:
+          mode: max
+          factor: 0.1
+          patience: 0
+          threshold: 0.0001
+  death_24h:
+    evaluate:
+      cv:
+        folds: 10
+        shuffle: true
+        seeds:
+        - 15
+        - 999
+        - 42
+    hparams:
+      units: 128
+      dropout_h1: 0.4
+      optimizer: adam
+      adam:
+        lr: 0.001
+        betas:
+        - 0.9
+        - 0.999
+        eps: 1.0e-07
+      batch_size: 1024
+      epochs: 1000
+      early_stop:
+        monitor: eval_aucroc
+        mode: max
+        patience: 2
+        min_delta: 0.0001
+      scheduler: reduce_lr_on_plateau
+      lr_scheduler:
+        monitor: eval_aucroc
+        scheduler:
+          mode: max
+          factor: 0.1
+          patience: 0
+          threshold: 0.0001

@@ -1,0 +1,388 @@
+stages:
+  # Phenotyping: baseline cohort and signals
+  phenotyping/setup/cohort:
+    cmd:
+    - python -m realphe.task.phenotyping.setup.cohort
+    deps:
+    - src/realphe/task/phenotyping/setup/cohort.py
+    outs:
+    - ${path.data.interim}/phenotyping/setup/cohort.zarr
+    params:
+    - db
+    - phenotyping.path
+    - phenotyping.cohort
+  phenotyping/setup/signals:
+    cmd:
+    - python -m realphe.task.phenotyping.setup.signals
+    deps:
+    - src/realphe/task/phenotyping/setup/signals.py
+    - ${path.data.interim}/phenotyping/setup/cohort.zarr
+    outs:
+    - ${path.data.processed}/phenotyping/setup/signals.zarr
+    params:
+    - db
+    - phenotyping.path
+    - phenotyping.signals
+  phenotyping/setup/signals_event_count:
+    cmd:
+    - python -m realphe.task.phenotyping.setup.signals_event_count
+    deps:
+    - src/realphe/task/phenotyping/setup/signals_event_count.py
+    - ${path.data.interim}/phenotyping/setup/cohort.zarr
+    outs:
+    - ${path.data.processed}/phenotyping/setup/signals_event_count.zarr
+    params:
+    - db
+    - phenotyping.path
+    - phenotyping.signals
+  phenotyping/setup/split:
+    cmd:
+    - python -m realphe.task.phenotyping.setup.split
+    deps:
+    - src/realphe/task/phenotyping/setup/split.py
+    - ${path.data.interim}/phenotyping/setup/cohort.zarr
+    outs:
+    - ${path.data.processed}/phenotyping/setup/cohort.zarr
+    params:
+    - phenotyping.path
+    - phenotyping.test_set
+  phenotyping/setup/adversarial:
+    cmd:
+    - python -m realphe.task.phenotyping.setup.adversarial
+    deps:
+    - src/realphe/task/phenotyping/setup/adversarial.py
+    - ${path.data.processed}/phenotyping/setup/cohort.zarr
+    - ${path.data.processed}/phenotyping/setup/signals.zarr
+    - ${path.data.processed}/phenotyping/setup/signals_event_count.zarr
+    params:
+    - phenotyping.path
+    - phenotyping.evaluate.adversarial
+    outs:
+    - ${phenotyping.path.eval}/setup/adversarial:
+        cache: false
+  # Phenotyping: baseline solution
+  phenotyping/baseline/setup:
+    cmd:
+    - python -m realphe.task.phenotyping.baseline.setup
+      solution=baseline
+    deps:
+    - src/realphe/task/phenotyping/baseline/setup.py
+    - ${path.data.processed}/phenotyping/setup/cohort.zarr
+    - ${path.data.processed}/phenotyping/setup/signals.zarr
+    - ${path.data.processed}/phenotyping/setup/signals_event_count.zarr
+    outs:
+    - ${path.data.processed}/phenotyping/baseline/cohort.zarr
+    - ${path.data.processed}/phenotyping/baseline/signals.zarr
+    - ${path.data.processed}/phenotyping/baseline/splits
+    params:
+    - phenotyping.path
+    - phenotyping.baseline.cohort
+    - phenotyping.baseline.signals
+    - phenotyping.baseline.evaluate.cv
+  phenotyping/baseline/train:
+    matrix:
+      seed: ${phenotyping.baseline.evaluate.cv.seeds}
+      fold: ${phenotyping.baseline.evaluate.cv.folds}
+    cmd:
+    - python -m realphe.task.phenotyping.baseline.train
+      solution=baseline
+      seed=${item.seed}
+      fold=${item.fold}
+    deps:
+    - src/realphe/task/phenotyping/baseline/solution.py
+    - src/realphe/task/phenotyping/baseline/train.py
+    - ${path.data.processed}/phenotyping/baseline/cohort.zarr
+    - ${path.data.processed}/phenotyping/baseline/signals.zarr
+    - ${path.data.processed}/phenotyping/baseline/splits/split_${item.seed}.npy
+    params:
+    - phenotyping.path
+    - phenotyping.baseline.hparams
+    outs:
+    - model/phenotyping/baseline/${item.seed}/${item.fold}/
+    - ${phenotyping.path.eval}/baseline/train/${item.seed}/fold_${item.fold}:
+        cache: false
+  phenotyping/baseline/evaluate:
+    cmd:
+    - python -m realphe.task.phenotyping.baseline.evaluate
+      solution=baseline
+    deps:
+    - src/realphe/task/phenotyping/baseline/evaluate.py
+    - ${path.data.processed}/phenotyping/baseline/cohort.zarr
+    - ${path.data.processed}/phenotyping/baseline/signals.zarr
+    - model/phenotyping/baseline/
+    params:
+    - phenotyping.path
+    - phenotyping.evaluate.main
+    - phenotyping.baseline.evaluate
+    outs:
+    - ${path.data.processed}/phenotyping/baseline/oof.parquet:
+        persist: false
+    - ${path.data.processed}/phenotyping/baseline/test.parquet:
+        persist: false
+    - ${phenotyping.path.eval}/baseline/eval/:
+        persist: false
+        cache: false
+  phenotyping/baseline/confidence:
+    cmd:
+    - python -m realphe.task.phenotyping.baseline.confidence
+      solution=baseline
+    deps:
+    - src/realphe/task/phenotyping/baseline/confidence.py
+    - ${path.data.processed}/phenotyping/baseline/oof.parquet
+    - ${path.data.processed}/phenotyping/baseline/test.parquet
+    params:
+    - phenotyping.path
+    outs:
+    - ${phenotyping.path.eval}/baseline/interpret/oof/ci.csv:
+        cache: false
+    - ${phenotyping.path.eval}/baseline/interpret/test/ci.csv:
+        cache: false
+  phenotyping/baseline/pfi:
+    matrix:
+      seed: ${phenotyping.baseline.evaluate.pfi.seeds}
+      fold: ${phenotyping.baseline.evaluate.pfi.folds}
+    cmd:
+    - python -m realphe.task.phenotyping.baseline.pfi
+      solution=baseline
+      seed=${item.seed}
+      fold=${item.fold}
+    deps:
+    - src/realphe/task/phenotyping/baseline/pfi.py
+    - ${path.data.processed}/phenotyping/baseline/cohort.zarr
+    - ${path.data.processed}/phenotyping/baseline/signals.zarr
+    - model/phenotyping/baseline/${item.seed}/${item.fold}/
+    params:
+    - phenotyping.path
+    outs:
+    - ${phenotyping.path.eval}/baseline/interpret/${item.seed}/${item.fold}/pfi.parquet
+  coding/ccs/baseline:
+    cmd:
+    - python -m realphe.task.coding.ccs
+      solution=baseline
+    deps:
+    - src/realphe/task/coding/ccs.py
+    - ${path.data.processed}/phenotyping/baseline/cohort.zarr
+    - ${path.data.processed}/phenotyping/baseline/oof.parquet
+    - ${path.data.processed}/phenotyping/baseline/test.parquet
+    params:
+    - coding.path
+    - coding.ccs
+    outs:
+    - ${path.data.processed}/coding/ccs/test_baseline.parquet
+    - ${coding.path.eval}/ccs/eval/:
+        cache: false
+  outcome/death_in_hospital/baseline:
+    cmd:
+    - python -m realphe.task.outcome.death_in_hospital solution=baseline
+    deps:
+    - src/realphe/task/outcome/death_in_hospital.py
+    - ${path.data.processed}/phenotyping/baseline/oof.parquet
+    - ${path.data.processed}/phenotyping/baseline/test.parquet
+    params:
+    - outcome.path
+    - outcome.death_in_hospital
+    outs:
+    - ${path.data.processed}/outcome/death_in_hospital/test_baseline.parquet
+    - ${path.data.processed}/outcome/death_in_hospital/oof_baseline.parquet
+    - ${outcome.path.eval}/death_in_hospital/eval/:
+        cache: false
+  outcome/death_in_icu/baseline:
+    cmd:
+    - python -m realphe.task.outcome.death_in_icu solution=baseline
+    deps:
+    - src/realphe/task/outcome/death_in_icu.py
+    - ${path.data.processed}/phenotyping/baseline/oof.parquet
+    - ${path.data.processed}/phenotyping/baseline/test.parquet
+    params:
+    - outcome.path
+    - outcome.death_in_icu
+    outs:
+    - ${path.data.processed}/outcome/death_in_icu/test_baseline.parquet
+    - ${path.data.processed}/outcome/death_in_icu/oof_baseline.parquet
+    - ${outcome.path.eval}/death_in_icu/eval/:
+        cache: false
+  outcome/death_30d_icu/baseline:
+    cmd:
+    - python -m realphe.task.outcome.death_30d_icu solution=baseline
+    deps:
+    - src/realphe/task/outcome/death_30d_icu.py
+    - ${path.data.processed}/phenotyping/baseline/oof.parquet
+    - ${path.data.processed}/phenotyping/baseline/test.parquet
+    params:
+    - outcome.path
+    - outcome.death_30d_icu
+    outs:
+    - ${path.data.processed}/outcome/death_30d_icu/test_baseline.parquet
+    - ${path.data.processed}/outcome/death_30d_icu/oof_baseline.parquet
+    - ${outcome.path.eval}/death_30d_icu/eval/:
+        cache: false
+  outcome/death_24h/baseline:
+    cmd:
+    - python -m realphe.task.outcome.death_24h solution=baseline
+    deps:
+    - src/realphe/task/outcome/death_24h.py
+    - ${path.data.processed}/phenotyping/baseline/oof.parquet
+    - ${path.data.processed}/phenotyping/baseline/test.parquet
+    params:
+    - outcome.path
+    - outcome.death_24h
+    outs:
+    - ${path.data.processed}/outcome/death_24h/test_baseline.parquet
+    - ${path.data.processed}/outcome/death_24h/oof_baseline.parquet
+    - ${outcome.path.eval}/death_24h/eval/:
+        cache: false
+  outcome/death_24h/baseline/confidence:
+    cmd:
+    - python -m realphe.task.outcome.confidence_death_24h solution=baseline
+    deps:
+    - src/realphe/task/outcome/confidence_death_24h.py
+    - ${path.data.processed}/outcome/death_24h/test_baseline.parquet
+    - ${path.data.processed}/outcome/death_24h/oof_baseline.parquet
+    - ${path.data.processed}/phenotyping/baseline/test.parquet
+    params:
+    - outcome.path
+    outs:
+    - ${outcome.path.eval}/death_24h/interpret/oof/ci.csv:
+        cache: false
+    - ${outcome.path.eval}/death_24h/interpret/test/ci.csv:
+        cache: false
+  outcome/death_30d_icu/baseline/confidence:
+    cmd:
+    - python -m realphe.task.outcome.confidence_death_30d_icu solution=baseline
+    deps:
+    - src/realphe/task/outcome/confidence_death_30d_icu.py
+    - ${path.data.processed}/outcome/death_30d_icu/test_baseline.parquet
+    - ${path.data.processed}/outcome/death_30d_icu/oof_baseline.parquet
+    - ${path.data.processed}/phenotyping/baseline/test.parquet
+    params:
+    - outcome.path
+    outs:
+    - ${outcome.path.eval}/death_30d_icu/interpret/oof/ci.csv:
+        cache: false
+    - ${outcome.path.eval}/death_30d_icu/interpret/test/ci.csv:
+        cache: false
+  outcome/death_in_hospital/baseline/confidence:
+    cmd:
+    - python -m realphe.task.outcome.confidence_death_in_hospital solution=baseline
+    deps:
+    - src/realphe/task/outcome/confidence_death_in_hospital.py
+    - ${path.data.processed}/outcome/death_in_hospital/test_baseline.parquet
+    - ${path.data.processed}/outcome/death_in_hospital/oof_baseline.parquet
+    - ${path.data.processed}/phenotyping/baseline/test.parquet
+    params:
+    - outcome.path
+    outs:
+    - ${outcome.path.eval}/death_in_hospital/interpret/oof/ci.csv:
+        cache: false
+    - ${outcome.path.eval}/death_in_hospital/interpret/test/ci.csv:
+        cache: false
+  outcome/death_in_icu/baseline/confidence:
+    cmd:
+    - python -m realphe.task.outcome.confidence_death_in_icu solution=baseline
+    deps:
+    - src/realphe/task/outcome/confidence_death_in_icu.py
+    - ${path.data.processed}/outcome/death_in_icu/test_baseline.parquet
+    - ${path.data.processed}/outcome/death_in_icu/oof_baseline.parquet
+    - ${path.data.processed}/phenotyping/baseline/test.parquet
+    params:
+    - outcome.path
+    outs:
+    - ${outcome.path.eval}/death_in_icu/interpret/oof/ci.csv:
+        cache: false
+    - ${outcome.path.eval}/death_in_icu/interpret/test/ci.csv:
+        cache: false
+params:
+- eval/phenotyping/baseline/eval/params.yaml
+- eval/phenotyping/adversarial/eval/params.yaml
+- eval/coding/ccs/eval/params.yaml
+- eval/outcome/death_in_hospital/eval/params.yaml
+- eval/outcome/death_in_icu/eval/params.yaml
+- eval/outcome/death_30d_icu/eval/params.yaml
+- eval/outcome/death_24h/eval/params.yaml
+metrics:
+- eval/phenotyping/baseline/eval/metrics.json
+- eval/phenotyping/adversarial/eval/metrics.json
+- eval/coding/ccs/eval/metrics.json
+- eval/outcome/death_in_hospital/eval/metrics.json
+- eval/outcome/death_in_icu/eval/metrics.json
+- eval/outcome/death_30d_icu/eval/metrics.json
+- eval/outcome/death_24h/eval/metrics.json
+plots:
+- eval/phenotyping/adversarial/eval/plots/custom/learning_curve/aucroc.json:
+    template: conf/template/learning_curve.json
+    x: step
+    y: aucroc
+    title: Adversarial Validation::Learning Curve::AUC
+- eval/phenotyping/adversarial/eval/plots/custom/learning_curve/loss.json:
+    template: conf/template/learning_curve.json
+    x: step
+    y: loss
+    title: Adversarial Validation::Learning Curve::loss
+- eval/phenotyping/adversarial/eval/plots/sklearn/roc.json:
+    template: simple
+    x: fpr
+    y: tpr
+    title: Adversarial Validation::OOF::AUC-ROC
+    x_label: False Positive Rate
+    y_label: True Positive Rate
+- eval/phenotyping/adversarial/eval/plots/sklearn/prc.json:
+    template: simple
+    x: recall
+    y: precision
+    title: Adversarial Validation::OOF::AUC-PRC
+    x_label: Recall
+    y_label: Precision
+- eval/phenotyping/adversarial/eval/plots/sklearn/cm.json:
+    template: confusion
+    x: actual
+    y: predicted
+    title: Adversarial Validation::OOF::Confusion Matrix
+    x_label: True Label
+    y_label: Predicted Label
+- eval/phenotyping/adversarial/eval/plots/metrics:
+    x: step
+    x_label: seed
+    template: conf/template/bar.json
+- eval/phenotyping/adversarial/eval/plots/metrics:
+    x: step
+    x_label: seed
+    template: conf/template/bar.json
+- eval/phenotyping/baseline/eval/plots/metrics:
+    x: step
+    x_label: seed
+    template: conf/template/bar.json
+- eval/phenotyping/baseline/eval/plots/custom/learning_curve/ls_auc.json:
+    template: conf/template/learning_curve.json
+    x: step
+    y: auc
+    title: Baseline::Learning Curve::auc
+- eval/phenotyping/baseline/eval/plots/custom/learning_curve/loss.json:
+    template: conf/template/learning_curve.json
+    x: step
+    y: loss
+    title: Baseline::Learning Curve::loss
+- eval/phenotyping/baseline/eval/plots/custom/learning_curve/ls_mAP@10.json:
+    template: conf/template/learning_curve.json
+    x: step
+    y: mAP@10
+    title: Baseline::Learning Curve::mAP@10
+- eval/phenotyping/baseline/eval/plots/custom/eval_test_corr/ls_roc_auc.json:
+    x: eval
+    y: test
+    title: Baseline::Validation/Test Correlation::(ls)AUC-ROC
+    template: conf/template/scatter.json
+- eval/phenotyping/baseline/eval/plots/custom/eval_test_corr/ls_mAP@10.json:
+    x: eval
+    y: test
+    title: Baseline::Validation/Test Correlation::(ls)mAP@10
+    template: conf/template/scatter.json
+- eval/phenotyping/baseline/eval/plots/custom/eval_test_corr/td_roc_auc.json:
+    x: eval
+    y: test
+    title: Baseline::Validation/Test Correlation::(td)AUC-ROC
+    template: conf/template/scatter.json
+- eval/phenotyping/baseline/eval/plots/custom/eval_test_corr/td_mAP@10.json:
+    x: eval
+    y: test
+    title: Baseline::Validation/Test Correlation::(td)mAP@10
+    template: conf/template/scatter.json

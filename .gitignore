@@ -1,0 +1,27 @@
+# project
+.idea
+.vscode
+*.swp
+
+# environment
+.venv
+
+# cache and logs
+__pycache__
+.pytest_cache
+.ipynb_checkpoints
+.dump
+.tmp
+.ropeproject
+.mypy_cache
+
+# build
+*.egg-info
+*.dist-info
+.eggs
+dist
+build
+
+# logs
+/logs/*
+!/logs/.gitkeep

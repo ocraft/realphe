@@ -1,0 +1,102 @@
+{
+  "2": {
+    "name": "Septicemia (except in labor)",
+    "type": "acute"
+  },
+  "49": {
+    "name": "Diabetes mellitus without complication",
+    "type": "chronic"
+  },
+  "50": {
+    "name": "Diabetes mellitus with complications",
+    "type": "mixed"
+  },
+  "53": {
+    "name": "Disorders of lipid metabolism",
+    "type": "chronic"
+  },
+  "55": {
+    "name": "Fluid and electrolyte disorders",
+    "type": "acute"
+  },
+  "98": {
+    "name": "Essential hypertension",
+    "type": "chronic"
+  },
+  "99": {
+    "name": "Hypertension with complications",
+    "type": "chronic"
+  },
+  "100": {
+    "name": "Acute myocardial infarction",
+    "type": "acute"
+  },
+  "101": {
+    "name": "Coronary atherosclerosis and related",
+    "type": "chronic"
+  },
+  "105": {
+    "name": "Conduction disorders",
+    "type": "mixed"
+  },
+  "106": {
+    "name": "Cardiac dysrhythmias",
+    "type": "mixed"
+  },
+  "108": {
+    "name": "Congestive heart failure; nonhypertensive",
+    "type": "mixed"
+  },
+  "109": {
+    "name": "Acute cerebrovascular disease",
+    "type": "acute"
+  },
+  "122": {
+    "name": "Pneumonia",
+    "type": "acute"
+  },
+  "127": {
+    "name": "Chronic obstructive pulmonary disease",
+    "type": "acute"
+  },
+  "130": {
+    "name": "Pleurisy; pneumothorax; pulmonary collapse",
+    "type": "acute"
+  },
+  "131": {
+    "name": "Respiratory failure; insufficiency; arrest",
+    "type": "acute"
+  },
+  "133": {
+    "name": "Other lower respiratory disease",
+    "type": "acute"
+  },
+  "134": {
+    "name": "Other upper respiratory disease",
+    "type": "acute"
+  },
+  "151": {
+    "name": "Other liver diseases",
+    "type": "mixed"
+  },
+  "153": {
+    "name": "Gastrointestinal hemorrhage",
+    "type": "acute"
+  },
+  "157": {
+    "name": "Acute and unspecified renal failure",
+    "type": "acute"
+  },
+  "158": {
+    "name": "Chronic kidney disease",
+    "type": "chronic"
+  },
+  "238": {
+    "name": "Complications of surgical/medical care",
+    "type": "acute"
+  },
+  "249": {
+    "name": "Shock",
+    "type": "acute"
+  }
+}

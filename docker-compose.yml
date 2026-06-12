@@ -1,0 +1,20 @@
+services:
+  realphe_db:
+    image: "postgres:latest"
+    shm_size: 1g
+    hostname: realphe_data
+    container_name: realphe_data
+    environment:
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - realphe_data:/var/lib/postgresql/data
+networks:
+  default:
+    external: true
+    name: local-network
+volumes:
+  realphe_data:
+    external: true
+    name: realphe_data

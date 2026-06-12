@@ -1,0 +1,83 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "data": {
+    "values": "<DVC_METRIC_DATA>"
+  },
+  "title": "<DVC_METRIC_TITLE>",
+  "params": [
+    "<DVC_METRIC_ZOOM_AND_PAN>"
+  ],
+  "width": "<DVC_METRIC_PLOT_WIDTH>",
+  "height": "<DVC_METRIC_PLOT_HEIGHT>",
+  "mark": {
+    "type": "line",
+    "tooltip": {"content": "data"}
+  },
+  "encoding": {
+    "x": {
+      "field": "<DVC_METRIC_X>",
+      "type": "quantitative",
+      "title": "<DVC_METRIC_X_LABEL>"
+    },
+    "color": {
+      "field": "data",
+      "scale": {
+        "domain": "unaggregated"
+      }
+    },
+    "strokeDash": {
+      "field": "rev",
+      "scale": {
+        "domain": "unaggregated"
+      },
+      "legend": {
+        "symbolFillColor": "transparent",
+        "symbolStrokeColor": "grey"
+      }
+    }
+  },
+  "layer": [
+    {
+      "mark": {
+        "type": "line",
+        "tooltip": {
+          "content": "data"
+        }
+      },
+      "encoding": {
+        "y": {
+          "field": "<DVC_METRIC_Y>",
+          "type": "quantitative",
+          "title": "<DVC_METRIC_Y_LABEL>",
+          "scale": {
+            "zero": false
+          }
+        },
+        "tooltip": "<DVC_METRIC_TOOLTIP>"
+      }
+    },
+    {
+      "mark": {
+        "type": "area",
+        "tooltip": {"content": "data"},
+        "line": true
+      },
+      "encoding": {
+        "y": {
+          "field": "std_l",
+          "type": "quantitative",
+          "title": "<DVC_METRIC_Y_LABEL>",
+          "scale": {"zero": false}
+        },
+        "y2": {
+          "type": "quantitative",
+          "field": "std_h"
+        },
+        "opacity": {
+          "value": 0.3
+        }
+      }
+    }
+  ]
+
+}

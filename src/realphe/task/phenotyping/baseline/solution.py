@@ -173,7 +173,8 @@ def train(
     log.info('... finished training baseline in [%d]s.', time.perf_counter() - time_start)
 
     # save model
-    torch.save(model, out_dir / 'model.pt')
+    model_path = out_dir / 'model.pt'
+    torch.save(model, model_path)
 
     live.log_artifact(out_dir / 'cohort_transformers.pkl',
                       type='model',
@@ -181,7 +182,7 @@ def train(
     live.log_artifact(out_dir / 'signals_transformers.pkl',
                       type='model',
                       labels=['transform', 'signals'])
-    live.log_artifact(out_dir / 'model.keras', type='model')
+    live.log_artifact(model_path, type='model')
 
     del live, compiled, history
     gc.collect()

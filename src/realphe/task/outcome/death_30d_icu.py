@@ -268,7 +268,7 @@ def predict_death(
             y_test_agg_pred.values
         )
     )
-    return y_test_agg_pred, y_oof_agg_pred
+    return y_oof_agg_pred, y_test_agg_pred
 
 
 def set_random_seed(seed: int):

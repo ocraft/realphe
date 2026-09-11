@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "realphe"
-version = "1.0.0"
+version = "1.0.1"
 authors = [
     { name="Piotr Picheta", email="piotr.a.picheta@gmail.com" }
 ]
@@ -67,3 +67,19 @@ torchaudio = [
 name = "pytorch-cu128"
 url = "https://download.pytorch.org/whl/cu128"
 explicit = true
+
+[tool.pytest.ini_options]
+testpaths = ["test"]
+addopts = "-ra"
+markers = [
+    "smoke: lightweight synthetic end-to-end checks that do not require MIMIC-IV",
+]
+
+[tool.coverage.run]
+source = ["realphe"]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "raise NotImplementedError",
+]

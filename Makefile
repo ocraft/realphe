@@ -16,3 +16,17 @@ PHONY += update
 update:
 	uv lock --upgrade
 	uv sync
+
+PHONY += test
+test:
+	uv run --locked --with-requirements test/requirements.txt pytest
+
+PHONY += test-smoke
+test-smoke:
+	uv run --locked --with-requirements test/requirements.txt pytest -m smoke
+
+PHONY += test-cov
+test-cov:
+	uv run --locked --with-requirements test/requirements.txt pytest --cov=realphe --cov-report=term-missing
+
+.PHONY: ${PHONY}
